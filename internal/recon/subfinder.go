@@ -38,6 +38,11 @@ func RunHttpx(Resolved_urls string, outputFile string) error {
 		10 * time.Minute,
 		"httpx",
 		"-l", Resolved_urls,
+		"-sc", "-title", "-td", "-server",
+		"-cl",  "-ct",  "-location", "-rt",
+		"-ip", "-cname", "-cdn",
+		"-timeout",  "10", "-retries", "1",
+		"-t", "50", "-rl" , "100",
 		"-o", outputFile,
 	)
 
