@@ -46,3 +46,16 @@ func Run(timeout time.Duration, name string, args ...string) (Result, error) {
 
 	return result, nil
 }
+func Log_scan_step(name string, fn func() error) error {
+	fmt.Println()
+	fmt.Println("[+] Rodando:", name)
+
+	err := fn()
+	if err != nil {
+		fmt.Println("[!] Erro em", name+":", err)
+		return err
+	}
+
+	fmt.Println("[+] Finalizado:", name)
+	return nil
+}
