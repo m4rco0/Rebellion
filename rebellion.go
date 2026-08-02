@@ -3,43 +3,35 @@ package main
 import (
 	"flag"
 	"fmt"
-	"os"
 
+	"github.com/m4rco0/Rebellion/internal/cli"
 	pathing "github.com/m4rco0/Rebellion/internal/pathing"
 	"github.com/m4rco0/Rebellion/internal/recon"
+	"github.com/m4rco0/Rebellion/internal/utils"
 )
 
+
 func main() {
-	activeScan := flag.Bool("active-scan", false, "Realiza o scan de forma ativa com o host")
-	flag.Parse()
 
-	if flag.NArg() < 1 {
-		fmt.Println("Uso: rebellion <domínio> [--active-scan]")
-		os.Exit(1)
-	}
-
-	domain := flag.Arg(0)
-
-	fmt.Println("================================")
-	fmt.Println("        Rebellion Scanner       ")
-	fmt.Println("================================")
-	fmt.Println("[+] Alvo:", domain)
+	args := cli.ParserArgs()
+	utils.ShowBanner()
+	fmt.Println("[+] Alvo:", args.Domain)
 
 	fmt.Println(flag.Arg(1))
 
-	paths, err := pathing.NewScan(domain)
+	paths, err := pathing.NewScan(args.Domain)
 	if err != nil {
 		fmt.Println("[!] Erro criando estrutura do projeto:", err)
 		return
 	}
 
 	fmt.Println("[+] Pasta do scan:", paths.Base)
-	err = recon.Scan_passivo(domain, &paths)
+	err = recon.Scan_passivo(args.Domain, &paths)
 	if err != nil {
 		fmt.Println("[!] Erro no scan passivo:", err)
 		return
 	}
-	if *activeScan {
+	if args.ActiveScan{
 		err := recon.ScanAtivo(paths.Resolved, paths.Alive)
 		if err != nil {
 			fmt.Println("[!] Erro no scan ativo:", err)
