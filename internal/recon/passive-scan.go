@@ -9,28 +9,30 @@ import (
 )
 
 func Scan_passivo(domain string, resolver string, paths *pathing.ScanPaths) error {
-	err := runner.Log_scan_step("Subfinder", func() error {
-		return BuscarSubfinder(domain, paths.SubdomainsRaw)
-	})
-	if err != nil {
-		return err
-	}
+	/*
+		err := runner.Log_scan_step("Subfinder", func() error {
+			return BuscarSubfinder(domain, paths.SubdomainsRaw)
+		})
+		if err != nil {
+			return err
+		}
 
-	err = runner.Log_scan_step("Assetfinder", func() error {
-		return BuscarAssetfinder(domain, paths.SubdomainsRaw)
-	})
-	if err != nil {
-		return err
-	}
-	err = runner.Log_scan_step("PureDNS", func() error {
-		return RunPureDNS(paths.SubdomainsRaw, resolver, paths.Resolved)
-	})
+		err = runner.Log_scan_step("Assetfinder", func() error {
+			return BuscarAssetfinder(domain, paths.SubdomainsRaw)
+		})
+		if err != nil {
+			return err
+		}
+		err = runner.Log_scan_step("PureDNS", func() error {
+			return RunPureDNS(paths.SubdomainsRaw, resolver, paths.Resolved)
+		})
 
-	if err != nil {
-		return err
-	}
-	/*err = runner.Log_scan_step("Waybackurls", func() error {
-		return BuscarWaybackurls(paths.Resolved,paths.Findings)
+		if err != nil {
+			return err
+		}
+	*/
+	err := runner.Log_scan_step("Waybackurls", func() error {
+		return BuscarWaybackurls(paths.Resolved, paths.Findings)
 	})
 	if err != nil {
 		return err
@@ -38,7 +40,6 @@ func Scan_passivo(domain string, resolver string, paths *pathing.ScanPaths) erro
 	err = runner.Log_scan_step("Gau", func() error {
 		return BuscarGau(paths.Resolved, paths.Findings)
 	})
-	*/
 
 	return err
 }
@@ -68,14 +69,11 @@ func BuscarAssetfinder(domain, outputFile string) error {
 }
 
 func BuscarWaybackurls(resolvedsFile, outputFile string) error {
+	fmt.Println("\n\nEntrando no waybackurls: ", resolvedsFile, outputFile)
 	result, err := runner.RunPipeline(
 		35*time.Minute,
 
-		[]string{"cat", resolvedsFile},
-
-		[]string{"waybackurls"},
-
-		[]string{"anew", outputFile},
+		[]string{"echo", "Hello, World!"},
 	)
 
 	fmt.Println(result.Stdout)
@@ -84,6 +82,7 @@ func BuscarWaybackurls(resolvedsFile, outputFile string) error {
 }
 
 func BuscarGau(resolvedsFile, outputFile string) error {
+	fmt.Println("\n\nEntrando no Gau:", resolvedsFile, outputFile)
 	result, err := runner.RunPipeline(
 		35*time.Minute,
 

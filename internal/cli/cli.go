@@ -4,6 +4,8 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"path/filepath"
+	"strings"
 )
 
 type Argumentos struct {
@@ -14,45 +16,40 @@ type Argumentos struct {
 }
 
 func ParserArgs() Argumentos {
-	if len(os.Args) < 2 {
-		fmt.Println("Uso: rebellion <domínio> [--active-scan]")
-		os.Exit(1)
-	}
 
-	args := Argumentos{
-		ActiveScan:  false,
-		PassiveScan: false,
-		Domain:      "",
-	}
-	opt_domain := os.Args[1]
 	opt_scan_ativo := flag.Bool("active-scan", false, "Realiza o scan de forma ativa com o host")
-
 	opt_scan_passivo := flag.Bool("passive-scan", false, "Realiza um scan de forma passiva")
+	opt_resolved_dns := flag.String("resolver", "./resolved.txt", "Caminho para o arquivo de resolvers DNS")
 
-	opt_resolved_dns := flag.String("resolver", "./resolved.txt", "Utilize para setar um resolver de DNS")
 	flag.Parse()
 
-	for i := 1; i < len(os.Args); i++ {
-		if os.Args[i] == "--active-scan" {
-			*opt_scan_ativo = true
-		}
-		if os.Args[i] == "--passive-scan" {
-			*opt_scan_passivo = true
-		}
-	}
-
 	if flag.NArg() < 1 {
-		fmt.Println("Uso: rebellion <domínio> [--active-scan]")
+		fmt.Println("Uso: rebellion [opções] <domínio>")
+		flag.PrintDefaults()
 		os.Exit(1)
 	}
 
-	fmt.Println(opt_domain)
-	args.Domain = opt_domain
-	args.ActiveScan = *opt_scan_ativo
-	args.PassiveScan = *opt_scan_passivo
-	args.ResolverDNS = *opt_resolved_dns
+	opt_domain := flag.Arg(0)
+
+	args := Argumentos{
+		Domain:      opt_domain,
+		ActiveScan:  *opt_scan_ativo,
+		PassiveScan: *opt_scan_passivo,
+		ResolverDNS: expandirTil(*opt_resolved_dns),
+	}
 
 	fmt.Println("Argumentos parseados: ", args)
 
 	return args
+}
+
+func expandirTil(caminho string) string {
+	if strings.HasPrefix(caminho, "~/") {
+		homeDir, err := os.UserHomeDir()
+		if err != nil {
+			return caminho
+		}
+		return filepath.Join(homeDir, caminho[2:])
+	}
+	return caminho
 }

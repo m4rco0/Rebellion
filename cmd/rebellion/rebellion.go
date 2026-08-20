@@ -40,6 +40,8 @@ func main() {
 		return
 	}
 
+	defer sqlDB.Close()
+
 	fmt.Println(utils.VERDE + "[+] Postgres carregado com sucesso!\n\n" + utils.BRANCO)
 
 	sqlDB.Ping()

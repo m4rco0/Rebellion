@@ -24,7 +24,8 @@ func InitDB(dsn string) (*gorm.DB, error) {
 		&models.Domain{},
 		&models.Endpoint{},
 		&models.Host{},
-		&models.Ports{},
+		&models.Port{},
+		&models.Scan{},
 		&models.Subdomain{},
 		&models.URL{},
 	)

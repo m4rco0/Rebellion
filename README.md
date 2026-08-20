@@ -26,13 +26,19 @@ Instale o PureDNS:
 ```bash
 go install github.com/d3mondev/puredns/v2@latest
 ```
-
+Instale o Waybackurls e o Gau
+```bash
+ go install github.com/lc/gau/v2/cmd/gau@latest
+ go install github.com/tomnomnom/waybackurls@latest
+```
 Confirme que os comandos estao acessiveis:
 
 ```bash
-subfinder -version
-puredns -h
-httpx -version
+subfinder -v
+puredns -v
+httpx -v
+gau -v
+waybackurls -v
 ```
 
 Se algum comando nao for encontrado, adicione o diretorio de binarios do Go ao `PATH`:
@@ -49,7 +55,10 @@ Clone o repositorio e entre na pasta:
 git clone https://github.com/m4rco0/Rebellion.git
 cd Rebellion
 ```
-
+Resolva as dependencias 
+```bash
+go mod tidy
+```
 Garanta que o arquivo `resolvers.txt` exista na raiz do projeto. Ele e usado pelo `puredns` durante a etapa de resolucao:
 
 ```bash
@@ -61,7 +70,7 @@ ls resolvers.txt
 Compile o binario:
 
 ```bash
-go build -o Rebellion rebellion.go
+go build ./cmd/rebellion/rebellion.go 
 ```
 
 ## Executar
@@ -76,6 +85,7 @@ O scan passivo executa:
 
 - `subfinder` para buscar subdominios
 - `puredns` para resolver os subdominios encontrados
+- `waybackurl` e `gau` para pegar urls antigos
 
 Scan com etapa ativa:
 
