@@ -8,8 +8,7 @@ import (
 	"github.com/m4rco0/Rebellion/internal/runner"
 )
 
-func Scan_passivo(domain string,resolver string,  paths *pathing.ScanPaths) error {
-	fmt.Println("==> Inicializando o scan passivo <==")
+func Scan_passivo(domain string, resolver string, paths *pathing.ScanPaths) error {
 	err := runner.Log_scan_step("Subfinder", func() error {
 		return BuscarSubfinder(domain, paths.SubdomainsRaw)
 	})
@@ -22,9 +21,9 @@ func Scan_passivo(domain string,resolver string,  paths *pathing.ScanPaths) erro
 	})
 	if err != nil {
 		return err
-	}	
+	}
 	err = runner.Log_scan_step("PureDNS", func() error {
-		return RunPureDNS(paths.SubdomainsRaw, resolver , paths.Resolved)
+		return RunPureDNS(paths.SubdomainsRaw, resolver, paths.Resolved)
 	})
 
 	if err != nil {
@@ -60,7 +59,7 @@ func BuscarSubfinder(hostname, outputFile string) error {
 
 func BuscarAssetfinder(domain, outputFile string) error {
 	_, err := runner.Run(
-		20 * time.Minute,
+		20*time.Minute,
 		"assetfinder", "-subs-only", domain,
 		"|", "anew", outputFile,
 	)
@@ -99,7 +98,7 @@ func BuscarGau(resolvedsFile, outputFile string) error {
 
 	return err
 }
-func RunPureDNS(inputFile , resolversFile, outputFile string) error {
+func RunPureDNS(inputFile, resolversFile, outputFile string) error {
 	_, err := runner.Run(
 		15*time.Minute,
 		"puredns",
@@ -111,4 +110,3 @@ func RunPureDNS(inputFile , resolversFile, outputFile string) error {
 
 	return err
 }
-

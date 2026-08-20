@@ -14,6 +14,11 @@ type Argumentos struct {
 }
 
 func ParserArgs() Argumentos {
+	if len(os.Args) < 2 {
+		fmt.Println("Uso: rebellion <domínio> [--active-scan]")
+		os.Exit(1)
+	}
+
 	args := Argumentos{
 		ActiveScan:  false,
 		PassiveScan: false,

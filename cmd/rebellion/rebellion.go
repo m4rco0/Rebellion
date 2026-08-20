@@ -15,7 +15,6 @@ import (
 func main() {
 	args := cli.ParserArgs()
 	utils.ShowBanner()
-
 	fmt.Println(utils.AZUL + "[+] Inicializando o banco de dados" + utils.BRANCO)
 
 	// pegando as credenciais no .env
@@ -41,7 +40,7 @@ func main() {
 		return
 	}
 
-	fmt.Println(utils.VERDE + "[+] Postgres carregado com sucesso!" + utils.BRANCO)
+	fmt.Println(utils.VERDE + "[+] Postgres carregado com sucesso!\n\n" + utils.BRANCO)
 
 	sqlDB.Ping()
 
@@ -58,6 +57,7 @@ func main() {
 	}
 
 	fmt.Println(utils.VERDE+"[+] Pasta do scan:"+utils.BRANCO, paths.Base)
+
 	err = recon.Scan_passivo(args.Domain, args.ResolverDNS, &paths)
 	if err != nil {
 		fmt.Println(utils.VERMELHO+"[!] Erro no scan passivo:"+utils.BRANCO, err)
