@@ -1,7 +1,6 @@
 package main
 
 import (
-	"flag"
 	"fmt"
 
 	"github.com/m4rco0/Rebellion/internal/cli"
@@ -10,15 +9,13 @@ import (
 	"github.com/m4rco0/Rebellion/internal/utils"
 )
 
-
 func main() {
 
 	args := cli.ParserArgs()
 	utils.ShowBanner()
 	fmt.Println("[+] Alvo:", args.Domain)
-
-	fmt.Println(flag.Arg(1))
-
+	fmt.Println("O scan ativo está: ", args.ActiveScan)
+	fmt.Println(args.Domain)
 	paths, err := pathing.NewScan(args.Domain)
 	if err != nil {
 		fmt.Println("[!] Erro criando estrutura do projeto:", err)
@@ -26,12 +23,13 @@ func main() {
 	}
 
 	fmt.Println("[+] Pasta do scan:", paths.Base)
-	err = recon.Scan_passivo(args.Domain, &paths)
+	err = recon.Scan_passivo(args.Domain, args.ResolverDNS, &paths)
 	if err != nil {
 		fmt.Println("[!] Erro no scan passivo:", err)
 		return
 	}
-	if args.ActiveScan{
+
+	if args.ActiveScan {
 		err := recon.ScanAtivo(paths.Resolved, paths.Alive)
 		if err != nil {
 			fmt.Println("[!] Erro no scan ativo:", err)
