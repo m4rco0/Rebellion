@@ -1,23 +1,22 @@
-
-
 services:
-
   db:
-    image: postgres
+    image: postgres:18-alpine
     container_name: rebellion-postgres
     restart: unless-stopped
-
     shm_size: 128mb
-
-
     environment:
       POSTGRES_USER: ${DB_USER}
       POSTGRES_PASSWORD: ${DB_PASSW}
       POSTGRES_DB: ${DB_NAME}
-    expose:
-      - 5432
+    ports:
+      - 5432:5432
     healthcheck:
       test: ["CMD", "pg_isready"]
       interval: 30s
       timeout: 10s
       retries: 5
+    volumes:
+      - rebellion_db_data:/var/lib/postgresql
+
+volumes:
+  rebellion_db_data:
