@@ -13,6 +13,7 @@ type Argumentos struct {
 	PassiveScan bool
 	Domain      string
 	ResolverDNS string
+	Headers     string
 }
 
 func ParserArgs() Argumentos {
@@ -20,6 +21,7 @@ func ParserArgs() Argumentos {
 	opt_scan_ativo := flag.Bool("active-scan", false, "Realiza o scan de forma ativa com o host")
 	opt_scan_passivo := flag.Bool("passive-scan", false, "Realiza um scan de forma passiva")
 	opt_resolved_dns := flag.String("resolver", "./resolved.txt", "Caminho para o arquivo de resolvers DNS")
+	opt_header_program := flag.String("Header", "", "Setando header para ser identificado pelas plataformas")
 
 	flag.Parse()
 
@@ -36,6 +38,7 @@ func ParserArgs() Argumentos {
 		ActiveScan:  *opt_scan_ativo,
 		PassiveScan: *opt_scan_passivo,
 		ResolverDNS: expandirTil(*opt_resolved_dns),
+		Headers:     *opt_header_program,
 	}
 
 	fmt.Println("Argumentos parseados: ", args)

@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"os/exec"
 	"time"
-
 )
 
 type Result struct {
@@ -61,8 +60,7 @@ func Log_scan_step(name string, fn func() error) error {
 	return nil
 }
 
-
-func RunPipeline(timeout time.Duration, commands ...[]string) (Result, error) { 
+func RunPipeline(timeout time.Duration, commands ...[]string) (Result, error) {
 	if len(commands) == 0 {
 		return Result{}, fmt.Errorf("nenhum comando fornecido")
 	}
@@ -70,28 +68,24 @@ func RunPipeline(timeout time.Duration, commands ...[]string) (Result, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), timeout)
 	defer cancel()
 
-
-	cmds := make([] *exec.Cmd, 0, len(commands))
+	cmds := make([]*exec.Cmd, 0, len(commands))
 
 	for _, command := range commands {
 		if len(command) == 0 {
 			return Result{}, fmt.Errorf("commando vazio")
 		}
 
-
 		if _, err := exec.LookPath(command[0]); err != nil {
 			return Result{}, fmt.Errorf("ferramenta não encontrada: %s", command[0])
 		}
 
-
-		cmds = append(cmds, exec.CommandContext(ctx, command[0], command[1:] ...))
+		cmds = append(cmds, exec.CommandContext(ctx, command[0], command[1:]...))
 	}
 
 	var stderr bytes.Buffer
 	var stdout bytes.Buffer
 
-
-	for i := 0 ; i < len(cmds) - 1; i++ {
+	for i := 0; i < len(cmds)-1; i++ {
 		pipe, err := cmds[i].StdoutPipe()
 
 		if err != nil {
@@ -102,7 +96,6 @@ func RunPipeline(timeout time.Duration, commands ...[]string) (Result, error) {
 	}
 
 	cmds[len(cmds)-1].Stdout = &stdout
-
 
 	for _, cmd := range cmds {
 		cmd.Stderr = &stderr
