@@ -58,3 +58,27 @@ func TestNewScan(t *testing.T) {
 	// removendo diretorios de tests
 	os.RemoveAll(tmpDir)
 }
+
+func TestSanitize(t *testing.T) {
+	testCases := []struct {
+		input    string
+		expected string
+	}{
+		{"http://example.com", "example.com"},
+		{"https://google.com", "google.com"},
+		{"   example.org   ", "example.org"},
+		{"example.net", "example.net"},
+		{"ftp://example.io", "example.io"},
+		{"ssh://example.io", "example.io"},
+		{"", ""},
+	}
+
+	for _, tc := range testCases {
+		result := sanitize(tc.input)
+
+		if result != tc.expected {
+			t.Errorf("sanitize(%q) = %q; esparado %q", tc.input, result, tc.expected)
+		}
+
+	}
+}

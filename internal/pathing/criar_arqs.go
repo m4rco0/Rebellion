@@ -9,7 +9,7 @@ import (
 
 type ScanPaths struct {
 	Base          string
-	Passive      string
+	Passive       string
 	DNS           string
 	HTTP          string
 	URLs          string
@@ -69,6 +69,8 @@ func sanitize(domain string) string {
 	domain = strings.TrimSpace(domain)
 	domain = strings.TrimPrefix(domain, "https://")
 	domain = strings.TrimPrefix(domain, "http://")
+	domain = strings.TrimPrefix(domain, "ftp://")
+	domain = strings.TrimPrefix(domain, "ssh://")
 	domain = strings.TrimSuffix(domain, "/")
 
 	replacer := strings.NewReplacer(
