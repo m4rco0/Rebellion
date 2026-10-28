@@ -3,3 +3,8 @@ output/*
 *.txt
 *.elf
 .env
+
+# binários de build locais
+/rebelion
+/rebellion
+/rebellion-web
