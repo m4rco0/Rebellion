@@ -11,12 +11,40 @@ services:
     ports:
       - 5432:5432
     healthcheck:
-      test: ["CMD", "pg_isready"]
-      interval: 30s
-      timeout: 10s
+      test: ["CMD", "pg_isready", "-U", "${DB_USER}", "-d", "${DB_NAME}"]
+      interval: 10s
+      timeout: 5s
       retries: 5
     volumes:
       - rebellion_db_data:/var/lib/postgresql
+
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: rebellion-web
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DB_HOST: db
+      DB_PORT: "5432"
+      DB_USER: ${DB_USER}
+      DB_PASSW: ${DB_PASSW}
+      DB_NAME: ${DB_NAME}
+      DB_SSLMODE: ${DB_SSLMODE:-disable}
+      WEB_ADDR: "0.0.0.0:8080"
+      WEB_USER: ${WEB_USER:-}
+      WEB_PASSW: ${WEB_PASSW:-}
+    ports:
+      - "127.0.0.1:${WEB_PORT:-8080}:8080"
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:8080/healthz >/dev/null || exit 1"]
+      interval: 30s
+      timeout: 5s
+      start_period: 10s
+      retries: 3
 
 volumes:
   rebellion_db_data:

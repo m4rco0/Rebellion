@@ -1,0 +1,9 @@
+.git
+.gitignore
+.env
+output
+rebelion
+rebellion
+rebellion-web
+*.txt
+*.elf
