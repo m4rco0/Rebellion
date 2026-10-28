@@ -12,6 +12,7 @@ func RunHttpx(Resolved_urls string, outputFile string) error {
 		30*time.Minute,
 		"httpx",
 		"-l", Resolved_urls,
+		"-json",
 		"-sc", "-title", "-td", "-server",
 		"-cl", "-ct", "-location", "-rt",
 		"-ip", "-cname", "-cdn",
@@ -47,10 +48,14 @@ func RunNaabu(alvos_ip, outputFile string) error {
 }
 
 func ScanAtivo(Resolved_urls, outputFile string) error {
-	runner.Log_scan_step("Httpx", func() error {
+	if err := runner.Log_scan_step("Httpx", func() error {
 		return RunHttpx(Resolved_urls, outputFile)
-	})
+	}); err != nil {
+		return err
+	}
 
+	// Gobuster ainda é experimental (depende de wordlist local e da URL, não de
+	// uma lista de hosts); uma falha aqui não invalida o resultado do httpx.
 	runner.Log_scan_step("Gobuster", func() error {
 		return RunGoBuster(Resolved_urls, outputFile)
 	})
