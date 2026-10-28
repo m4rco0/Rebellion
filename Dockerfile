@@ -1,5 +1,3 @@
-# syntax=docker/dockerfile:1
-
 # Build do painel web. O binário é estático e não precisa de Go na imagem final.
 FROM golang:1.26-alpine AS build
 
