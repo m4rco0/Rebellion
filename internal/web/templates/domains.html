@@ -1,0 +1,59 @@
+{{define "content"}}
+<section class="page-head">
+  <div>
+    <p class="eyebrow">Escopo</p>
+    <h1>Domínios</h1>
+    <p class="subtitle">Domínios raiz cadastrados e o volume de dados de cada um.</p>
+  </div>
+</section>
+
+<section class="panel">
+  <header class="panel-head">
+    <h2>{{.Pagination.Total}} domínio(s)</h2>
+  </header>
+
+  <form class="filters" method="get" action="/domains">
+    <label class="grow">
+      <span>Buscar</span>
+      <input type="search" name="q" value="{{.Query}}" placeholder="ex.: example.com">
+    </label>
+    <div class="filter-actions">
+      <button class="btn" type="submit">Filtrar</button>
+      <a class="btn ghost" href="/domains">Limpar</a>
+    </div>
+  </form>
+
+  {{if .Domains}}
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Domínio</th>
+          <th>Programa</th>
+          <th>Subdomínios</th>
+          <th>URLs</th>
+          <th>Scans</th>
+          <th>Criado em</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{range .Domains}}
+        <tr>
+          <td><a href="/domains/{{.ID}}">{{.Name}}</a></td>
+          <td><span class="chip">{{.ProgramName}}</span></td>
+          <td class="mono">{{.SubdomainCount}}</td>
+          <td class="mono">{{.URLCount}}</td>
+          <td class="mono">{{.ScanCount}}</td>
+          <td class="nowrap muted">{{fmtTime .CreatedAt}}</td>
+        </tr>
+        {{end}}
+      </tbody>
+    </table>
+  </div>
+
+  {{template "pagination" .}}
+  {{else}}
+    {{template "empty" "Nenhum domínio encontrado com esse filtro."}}
+  {{end}}
+</section>
+{{end}}

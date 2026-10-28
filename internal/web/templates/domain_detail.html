@@ -1,0 +1,104 @@
+{{define "content"}}
+<section class="page-head">
+  <div>
+    <p class="eyebrow">{{.Domain.Program.Platform}} / {{.Domain.Program.Name}}</p>
+    <h1>{{.Domain.Name}}</h1>
+    <p class="subtitle">Cadastrado em {{fmtTime .Domain.CreatedAt}} · atualizado em {{fmtTime .Domain.UpdatedAt}}</p>
+  </div>
+  <div class="head-actions">
+    <a class="btn" href="/graph?domain={{.Domain.ID}}">Ver grafo</a>
+    <a class="btn ghost" href="/domains">Domínios</a>
+  </div>
+</section>
+
+<section class="stats small">
+  <article class="stat">
+    <span class="stat-label">Subdomínios</span>
+    <strong>{{.Counts.Subdomains}}</strong>
+  </article>
+  <article class="stat">
+    <span class="stat-label">Scans</span>
+    <strong>{{.Counts.Scans}}</strong>
+  </article>
+  <article class="stat">
+    <span class="stat-label">URLs</span>
+    <strong>{{.Counts.URLs}}</strong>
+  </article>
+  <article class="stat">
+    <span class="stat-label">Probes HTTP</span>
+    <strong>{{.Counts.Probes}}</strong>
+  </article>
+</section>
+
+<section class="panel">
+  <header class="panel-head">
+    <h2>Scans recentes</h2>
+    <a class="link" href="/scans?q={{.Domain.Name}}">todos -&gt;</a>
+  </header>
+
+  {{if .Scans}}
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Status</th>
+          <th>Início</th>
+          <th>Fim</th>
+          <th>Duração</th>
+          <th>Erro</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{range .Scans}}
+        <tr>
+          <td class="mono"><a href="/scans/{{.ID}}">{{.ID}}</a></td>
+          <td>{{template "status" .Status}}</td>
+          <td class="nowrap">{{fmtTime .StartedAt}}</td>
+          <td class="nowrap muted">{{fmtTimePtr .FinishedAt}}</td>
+          <td class="nowrap muted">{{duration .StartedAt .FinishedAt}}</td>
+          <td class="error-cell" title="{{.Error}}">{{if .Error}}{{truncate .Error 60}}{{else}}<span class="muted">—</span>{{end}}</td>
+        </tr>
+        {{end}}
+      </tbody>
+    </table>
+  </div>
+  {{else}}
+    {{template "empty" "Este domínio ainda não teve scans."}}
+  {{end}}
+</section>
+
+<section class="panel">
+  <header class="panel-head">
+    <h2>Subdomínios</h2>
+    <span class="muted">{{.Pagination.Total}} registro(s)</span>
+  </header>
+
+  {{if .Subdomains}}
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Subdomínio</th>
+          <th>URLs</th>
+          <th>Descoberto em</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{range .Subdomains}}
+        <tr>
+          <td><a href="/subdomains/{{.ID}}">{{.Name}}</a></td>
+          <td class="mono">{{.URLCount}}</td>
+          <td class="nowrap muted">{{fmtTime .CreatedAt}}</td>
+        </tr>
+        {{end}}
+      </tbody>
+    </table>
+  </div>
+
+  {{template "pagination" .}}
+  {{else}}
+    {{template "empty" "Nenhum subdomínio descoberto para este domínio."}}
+  {{end}}
+</section>
+{{end}}

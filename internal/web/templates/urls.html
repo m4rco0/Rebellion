@@ -1,0 +1,60 @@
+{{define "content"}}
+<section class="page-head">
+  <div>
+    <p class="eyebrow">Coleta</p>
+    <h1>URLs</h1>
+    <p class="subtitle">URLs descobertas pelo gau/waybackurls e validadas pelo httpx.</p>
+  </div>
+</section>
+
+<section class="panel">
+  <header class="panel-head">
+    <h2>{{.Pagination.Total}} URL(s)</h2>
+  </header>
+
+  <form class="filters" method="get" action="/urls">
+    <label class="grow">
+      <span>Buscar</span>
+      <input type="search" name="q" value="{{.Query}}" placeholder="ex.: /admin ou api.example.com">
+    </label>
+    <div class="filter-actions">
+      <button class="btn" type="submit">Filtrar</button>
+      <a class="btn ghost" href="/urls">Limpar</a>
+    </div>
+  </form>
+
+  {{if .URLs}}
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>URL</th>
+          <th>Subdomínio</th>
+          <th>Último status</th>
+          <th>Probes</th>
+          <th>Descoberta em</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{range .URLs}}
+        <tr>
+          <td class="url-cell">
+            <a href="{{.RawURL}}" target="_blank" rel="noreferrer noopener">{{truncate .RawURL 85}}</a>
+            {{template "copy" .RawURL}}
+          </td>
+          <td><a href="/subdomains/{{.SubdomainID}}">{{.SubdomainName}}</a></td>
+          <td>{{template "code" .LastStatus}}</td>
+          <td class="mono">{{.ProbeCount}}</td>
+          <td class="nowrap muted">{{fmtTime .CreatedAt}}</td>
+        </tr>
+        {{end}}
+      </tbody>
+    </table>
+  </div>
+
+  {{template "pagination" .}}
+  {{else}}
+    {{template "empty" "Nenhuma URL encontrada com esse filtro."}}
+  {{end}}
+</section>
+{{end}}

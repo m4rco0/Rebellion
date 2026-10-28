@@ -1,0 +1,142 @@
+{{define "content"}}
+<section class="page-head">
+  <div>
+    <p class="eyebrow">Scan #{{.Scan.ID}}</p>
+    <h1>{{.Scan.Domain.Name}}</h1>
+    <p class="subtitle">
+      Programa {{.Scan.Domain.Program.Platform}} / {{.Scan.Domain.Program.Name}}
+      · iniciado em {{fmtTime .Scan.StartedAt}}
+      · duração {{duration .Scan.StartedAt .Scan.FinishedAt}}
+    </p>
+  </div>
+  <div class="head-actions">
+    {{template "status" .Scan.Status}}
+    <a class="btn ghost" href="/domains/{{.Scan.DomainID}}">Domínio</a>
+  </div>
+</section>
+
+{{if .Scan.Error}}
+<section class="notice error">
+  <strong>Erro registrado</strong>
+  <pre>{{.Scan.Error}}</pre>
+</section>
+{{end}}
+
+<section class="stats small">
+  <article class="stat">
+    <span class="stat-label">Subdomínios</span>
+    <strong>{{.Counts.Subdomains}}</strong>
+  </article>
+  <article class="stat">
+    <span class="stat-label">Resoluções</span>
+    <strong>{{.Counts.Resolutions}}</strong>
+  </article>
+  <article class="stat">
+    <span class="stat-label">Probes HTTP</span>
+    <strong>{{.Counts.Probes}}</strong>
+  </article>
+</section>
+
+<section class="panel">
+  <header class="panel-head">
+    <h2>Probes HTTP</h2>
+    {{if .ProbesCutoff}}<span class="muted">mostrando os primeiros 200</span>{{end}}
+  </header>
+
+  {{if .Probes}}
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Código</th>
+          <th>URL</th>
+          <th>Título</th>
+          <th>Servidor</th>
+          <th>Tecnologias</th>
+          <th>Tempo</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{range .Probes}}
+        <tr>
+          <td>{{template "code" .StatusCode}}</td>
+          <td class="url-cell">
+            <a href="{{.URL.RawURL}}" target="_blank" rel="noreferrer noopener">{{truncate .URL.RawURL 90}}</a>
+            {{template "copy" .URL.RawURL}}
+          </td>
+          <td class="truncate" title="{{.Title}}">{{if .Title}}{{truncate .Title 50}}{{else}}<span class="muted">—</span>{{end}}</td>
+          <td class="mono muted">{{if .Server}}{{.Server}}{{else}}—{{end}}</td>
+          <td>{{template "tech" .Technologies}}</td>
+          <td class="nowrap muted">{{if .ResponseTime}}{{.ResponseTime}}{{else}}—{{end}}</td>
+        </tr>
+        {{end}}
+      </tbody>
+    </table>
+  </div>
+  {{else}}
+    {{template "empty" "Nenhum probe HTTP neste scan."}}
+  {{end}}
+</section>
+
+<div class="grid two">
+  <section class="panel">
+    <header class="panel-head">
+      <h2>Subdomínios descobertos</h2>
+      <span class="muted">{{len .Subdomains}} registro(s)</span>
+    </header>
+
+    {{if .Subdomains}}
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Subdomínio</th>
+            <th>Fonte</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{range .Subdomains}}
+          <tr>
+            <td><a href="/subdomains/{{.ID}}">{{.Name}}</a></td>
+            <td><span class="chip">{{.Source}}</span></td>
+          </tr>
+          {{end}}
+        </tbody>
+      </table>
+    </div>
+    {{else}}
+      {{template "empty" "Este scan não registrou subdomínios."}}
+    {{end}}
+  </section>
+
+  <section class="panel">
+    <header class="panel-head">
+      <h2>Resoluções DNS</h2>
+      <span class="muted">{{len .Resolutions}} registro(s)</span>
+    </header>
+
+    {{if .Resolutions}}
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Subdomínio</th>
+            <th>IP</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{range .Resolutions}}
+          <tr>
+            <td><a href="/subdomains/{{.SubdomainID}}">{{.SubdomainName}}</a></td>
+            <td class="mono">{{.IP}}</td>
+          </tr>
+          {{end}}
+        </tbody>
+      </table>
+    </div>
+    {{else}}
+      {{template "empty" "Este scan não registrou resoluções."}}
+    {{end}}
+  </section>
+</div>
+{{end}}

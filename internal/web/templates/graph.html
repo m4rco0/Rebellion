@@ -1,0 +1,59 @@
+{{define "content"}}
+<section class="page-head">
+  <div>
+    <p class="eyebrow">Relações</p>
+    <h1>Grafo de domínios</h1>
+    <p class="subtitle">
+      Cada domínio aparece ligado aos subdomínios descobertos. Arraste os nós,
+      use a roda do mouse para ampliar e clique para abrir os detalhes.
+    </p>
+  </div>
+  <div class="head-actions">
+    <a class="btn ghost" href="/domains">Ver em lista</a>
+  </div>
+</section>
+
+<section class="panel">
+  <form class="filters" method="get" action="/graph">
+    <label>
+      <span>Domínio</span>
+      <select name="domain">
+        <option value="" {{if eq .DomainID 0}}selected{{end}}>Todos os domínios</option>
+        {{range .Domains}}
+        <option value="{{.ID}}" {{if eq .ID $.DomainID}}selected{{end}}>{{.Name}} ({{.Subdomains}})</option>
+        {{end}}
+      </select>
+    </label>
+    <label>
+      <span>Subdomínios por domínio</span>
+      <select name="limit">
+        {{range .LimitValues}}
+        <option value="{{.}}" {{if eq . $.Limit}}selected{{end}}>{{.}}</option>
+        {{end}}
+      </select>
+    </label>
+    <div class="filter-actions">
+      <button class="btn" type="submit">Aplicar</button>
+      <a class="btn ghost" href="/graph">Limpar</a>
+    </div>
+  </form>
+
+  {{if .Domains}}
+  <div class="graph-toolbar">
+    <div class="graph-legend">
+      <span><i class="graph-dot" aria-hidden="true"></i> domínio</span>
+      <span><i class="graph-dot subdomain" aria-hidden="true"></i> subdomínio</span>
+    </div>
+    <span class="graph-status" id="graph-status">Carregando…</span>
+  </div>
+  <div class="graph-canvas" id="graph" data-src="{{.GraphURL}}">
+    <p class="graph-fallback">
+      Carregando o grafo… Se o JavaScript estiver desativado, use a
+      <a href="/domains">lista de domínios</a>.
+    </p>
+  </div>
+  {{else}}
+    {{template "empty" "Nenhum domínio cadastrado. Rode um scan para popular o banco."}}
+  {{end}}
+</section>
+{{end}}

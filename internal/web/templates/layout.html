@@ -1,0 +1,54 @@
+{{define "layout"}}
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <title>{{.Title}} · Rebellion</title>
+  <link rel="stylesheet" href="/static/style.css">
+  <link rel="icon" href="/static/favicon.svg" type="image/svg+xml">
+</head>
+<body>
+  <a class="skip" href="#conteudo">Pular para o conteúdo</a>
+
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a class="brand" href="/">
+        <span class="brand-mark" aria-hidden="true">&gt;_</span>
+        <span class="brand-text">Rebellion<small>recon database</small></span>
+      </a>
+
+      <nav class="nav" aria-label="Navegação principal">
+        <a href="/" class="{{if eq .Active "dashboard"}}active{{end}}">Visão geral</a>
+        <a href="/scans" class="{{if eq .Active "scans"}}active{{end}}">Scans</a>
+        <a href="/domains" class="{{if eq .Active "domains"}}active{{end}}">Domínios</a>
+        <a href="/subdomains" class="{{if eq .Active "subdomains"}}active{{end}}">Subdomínios</a>
+        <a href="/graph" class="{{if eq .Active "graph"}}active{{end}}">Grafo</a>
+        <a href="/urls" class="{{if eq .Active "urls"}}active{{end}}">URLs</a>
+        <a href="/probes" class="{{if eq .Active "probes"}}active{{end}}">HTTP</a>
+      </nav>
+
+      <a class="api-link" href="/api/stats" target="_blank" rel="noreferrer" title="Abrir API JSON">
+        API
+      </a>
+    </div>
+  </header>
+
+  <main id="conteudo" class="container">
+    {{template "content" .}}
+  </main>
+
+  <footer class="footer">
+    <span>Rebellion · interface somente leitura sobre o PostgreSQL</span>
+    <span class="footer-links">
+      <a href="/api/stats">API JSON</a>
+      <a href="/healthz">Saúde</a>
+    </span>
+  </footer>
+
+  <script src="/static/app.js" defer></script>
+  <script src="/static/graph.js" defer></script>
+</body>
+</html>
+{{end}}

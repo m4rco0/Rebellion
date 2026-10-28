@@ -1,0 +1,139 @@
+{{define "content"}}
+<section class="page-head">
+  <div>
+    <p class="eyebrow">
+      <a href="/domains/{{.Subdomain.DomainID}}">{{.Subdomain.Domain.Name}}</a>
+    </p>
+    <h1>{{.Subdomain.Name}}</h1>
+    <p class="subtitle">Descoberto em {{fmtTime .Subdomain.CreatedAt}}</p>
+  </div>
+  <div class="head-actions">
+    <a class="btn" href="/graph?domain={{.Subdomain.DomainID}}">Ver grafo</a>
+    <a class="btn ghost" href="/subdomains">Subdomínios</a>
+  </div>
+</section>
+
+<section class="stats small">
+  <article class="stat">
+    <span class="stat-label">URLs</span>
+    <strong>{{.Counts.URLs}}</strong>
+  </article>
+  <article class="stat">
+    <span class="stat-label">Resoluções</span>
+    <strong>{{.Counts.Resolutions}}</strong>
+  </article>
+  <article class="stat">
+    <span class="stat-label">Probes HTTP</span>
+    <strong>{{.Counts.Probes}}</strong>
+  </article>
+</section>
+
+<div class="grid two">
+  <section class="panel">
+    <header class="panel-head">
+      <h2>Resoluções DNS</h2>
+      <span class="muted">{{len .Resolutions}} registro(s)</span>
+    </header>
+
+    {{if .Resolutions}}
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>IP</th>
+            <th>Scan</th>
+            <th>Quando</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{range .Resolutions}}
+          <tr>
+            <td class="mono">{{.IP}}</td>
+            <td><a href="/scans/{{.ScanID}}">#{{.ScanID}}</a></td>
+            <td class="nowrap muted">{{fmtTime .CreatedAt}}</td>
+          </tr>
+          {{end}}
+        </tbody>
+      </table>
+    </div>
+    {{else}}
+      {{template "empty" "Nenhuma resolução DNS registrada."}}
+    {{end}}
+  </section>
+
+  <section class="panel">
+    <header class="panel-head">
+      <h2>Probes HTTP recentes</h2>
+      <span class="muted">até 50</span>
+    </header>
+
+    {{if .Probes}}
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Código</th>
+            <th>URL</th>
+            <th>Título</th>
+            <th>Scan</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{range .Probes}}
+          <tr>
+            <td>{{template "code" .StatusCode}}</td>
+            <td class="truncate" title="{{.URL.RawURL}}">{{truncate .URL.RawURL 55}}</td>
+            <td class="truncate" title="{{.Title}}">{{if .Title}}{{truncate .Title 35}}{{else}}<span class="muted">—</span>{{end}}</td>
+            <td class="mono"><a href="/scans/{{.ScanID}}">#{{.ScanID}}</a></td>
+          </tr>
+          {{end}}
+        </tbody>
+      </table>
+    </div>
+    {{else}}
+      {{template "empty" "Nenhum probe HTTP registrado."}}
+    {{end}}
+  </section>
+</div>
+
+<section class="panel">
+  <header class="panel-head">
+    <h2>URLs</h2>
+    <span class="muted">{{.Pagination.Total}} registro(s)</span>
+  </header>
+
+  {{if .URLs}}
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>URL</th>
+          <th>Esquema</th>
+          <th>Caminho</th>
+          <th>Último status</th>
+          <th>Probes</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{range .URLs}}
+        <tr>
+          <td class="url-cell">
+            <a href="{{.RawURL}}" target="_blank" rel="noreferrer noopener">{{truncate .RawURL 80}}</a>
+            {{template "copy" .RawURL}}
+          </td>
+          <td class="mono muted">{{if .Scheme}}{{.Scheme}}{{else}}—{{end}}</td>
+          <td class="mono muted" title="{{.Path}}">{{if .Path}}{{truncate .Path 30}}{{else}}/{{end}}</td>
+          <td>{{template "code" .LastStatus}}</td>
+          <td class="mono">{{.ProbeCount}}</td>
+        </tr>
+        {{end}}
+      </tbody>
+    </table>
+  </div>
+
+  {{template "pagination" .}}
+  {{else}}
+    {{template "empty" "Nenhuma URL descoberta para este subdomínio."}}
+  {{end}}
+</section>
+{{end}}

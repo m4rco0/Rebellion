@@ -1,0 +1,45 @@
+{{define "pagination"}}
+{{if gt .Pagination.TotalPages 1}}
+<nav class="pagination" aria-label="Paginação">
+  {{if .Pagination.HasPrev}}
+    <a class="btn small" href="{{.Pagination.Path}}?page={{.Pagination.PrevPage}}{{.Pagination.Filter}}">Anterior</a>
+  {{else}}
+    <span class="btn small disabled" aria-disabled="true">Anterior</span>
+  {{end}}
+
+  <span class="page-info">
+    Página <strong>{{.Pagination.Page}}</strong> de {{.Pagination.TotalPages}}
+    · {{.Pagination.Total}} registro(s)
+  </span>
+
+  {{if .Pagination.HasNext}}
+    <a class="btn small" href="{{.Pagination.Path}}?page={{.Pagination.NextPage}}{{.Pagination.Filter}}">Próxima</a>
+  {{else}}
+    <span class="btn small disabled" aria-disabled="true">Próxima</span>
+  {{end}}
+</nav>
+{{end}}
+{{end}}
+
+{{define "status"}}
+<span class="badge {{statusClass .}}">{{.}}</span>
+{{end}}
+
+{{define "code"}}
+{{if .}}<span class="badge {{httpClass .}}">{{.}}</span>{{else}}<span class="badge muted">—</span>{{end}}
+{{end}}
+
+{{define "tech"}}
+{{range .}}<span class="chip">{{.}}</span>{{else}}<span class="muted">—</span>{{end}}
+{{end}}
+
+{{define "empty"}}
+<div class="empty">
+  <strong>Nada por aqui</strong>
+  <p>{{.}}</p>
+</div>
+{{end}}
+
+{{define "copy"}}
+<button type="button" class="copy" data-copy="{{.}}" title="Copiar">{{"copiar"}}</button>
+{{end}}

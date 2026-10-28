@@ -1,0 +1,168 @@
+{{define "content"}}
+<section class="page-head">
+  <div>
+    <p class="eyebrow">Inventário</p>
+    <h1>Visão geral</h1>
+    <p class="subtitle">Tudo que o Rebellion já coletou, direto do PostgreSQL.</p>
+  </div>
+  <div class="head-actions">
+    <a class="btn" href="/graph">Ver grafo</a>
+    <a class="btn ghost" href="/scans">Ver scans</a>
+  </div>
+</section>
+
+<section class="stats" aria-label="Contadores">
+  <article class="stat">
+    <span class="stat-label">Domínios</span>
+    <strong>{{.Counts.Domains}}</strong>
+    <span class="stat-hint">{{.Counts.Programs}} programa(s)</span>
+  </article>
+  <article class="stat">
+    <span class="stat-label">Scans</span>
+    <strong>{{.Counts.Scans}}</strong>
+    <span class="stat-hint">{{.Counts.Running}} em execução</span>
+  </article>
+  <article class="stat">
+    <span class="stat-label">Subdomínios</span>
+    <strong>{{.Counts.Subdomains}}</strong>
+    <span class="stat-hint">{{.Counts.Hosts}} host(s) IP</span>
+  </article>
+  <article class="stat">
+    <span class="stat-label">URLs</span>
+    <strong>{{.Counts.URLs}}</strong>
+    <span class="stat-hint">descobertas</span>
+  </article>
+  <article class="stat">
+    <span class="stat-label">Probes HTTP</span>
+    <strong>{{.Counts.Probes}}</strong>
+    <span class="stat-hint">respostas do httpx</span>
+  </article>
+</section>
+
+<div class="grid two">
+  <section class="panel">
+    <header class="panel-head">
+      <h2>Scans recentes</h2>
+      <a class="link" href="/scans">todos -&gt;</a>
+    </header>
+
+    {{if .RecentScans}}
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Domínio</th>
+            <th>Status</th>
+            <th>Início</th>
+            <th>Duração</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{range .RecentScans}}
+          <tr>
+            <td class="mono"><a href="/scans/{{.ID}}">{{.ID}}</a></td>
+            <td><a href="/scans/{{.ID}}">{{.Domain.Name}}</a></td>
+            <td>{{template "status" .Status}}</td>
+            <td class="nowrap">{{fmtTime .StartedAt}}</td>
+            <td class="nowrap muted">{{duration .StartedAt .FinishedAt}}</td>
+          </tr>
+          {{end}}
+        </tbody>
+      </table>
+    </div>
+    {{else}}
+      {{template "empty" "Nenhum scan registrado ainda. Rode o Rebellion para popular o banco."}}
+    {{end}}
+  </section>
+
+  <section class="panel">
+    <header class="panel-head">
+      <h2>Status dos scans</h2>
+    </header>
+
+    {{if .ScanStatus}}
+      <ul class="bars">
+        {{range .ScanStatus}}
+        <li>
+          <div class="bar-label">
+            {{template "status" .Label}}
+            <span class="mono">{{.Total}}</span>
+          </div>
+          <div class="bar"><span style="width: {{pct .Total $.Counts.Scans}}%"></span></div>
+        </li>
+        {{end}}
+      </ul>
+    {{else}}
+      {{template "empty" "Sem dados de status."}}
+    {{end}}
+  </section>
+</div>
+
+<div class="grid three">
+  <section class="panel">
+    <header class="panel-head">
+      <h2>Domínios por subdomínios</h2>
+      <a class="link" href="/domains">todos -&gt;</a>
+    </header>
+
+    {{if .TopDomains}}
+      <ul class="bars">
+        {{range .TopDomains}}
+        <li>
+          <div class="bar-label">
+            <span class="truncate" title="{{.Label}}">{{.Label}}</span>
+            <span class="mono">{{.Total}}</span>
+          </div>
+          <div class="bar"><span style="width: {{pct .Total $.Counts.Subdomains}}%"></span></div>
+        </li>
+        {{end}}
+      </ul>
+    {{else}}
+      {{template "empty" "Nenhum domínio cadastrado."}}
+    {{end}}
+  </section>
+
+  <section class="panel">
+    <header class="panel-head">
+      <h2>Códigos HTTP</h2>
+      <a class="link" href="/probes">ver -&gt;</a>
+    </header>
+
+    {{if .TopCodes}}
+      <ul class="bars">
+        {{range .TopCodes}}
+        <li>
+          <div class="bar-label">
+            {{template "code" .Code}}
+            <span class="mono">{{.Total}}</span>
+          </div>
+          <div class="bar"><span style="width: {{pct .Total $.Counts.Probes}}%"></span></div>
+        </li>
+        {{end}}
+      </ul>
+    {{else}}
+      {{template "empty" "Nenhum probe HTTP registrado."}}
+    {{end}}
+  </section>
+
+  <section class="panel">
+    <header class="panel-head">
+      <h2>Tecnologias</h2>
+    </header>
+
+    {{if .TopTechnologies}}
+      <ul class="tech-list">
+        {{range .TopTechnologies}}
+        <li>
+          <span class="chip">{{.Label}}</span>
+          <span class="mono muted">{{.Total}}</span>
+        </li>
+        {{end}}
+      </ul>
+    {{else}}
+      {{template "empty" "Nenhuma tecnologia identificada."}}
+    {{end}}
+  </section>
+</div>
+{{end}}

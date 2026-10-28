@@ -1,0 +1,70 @@
+{{define "content"}}
+<section class="page-head">
+  <div>
+    <p class="eyebrow">Execuções</p>
+    <h1>Scans</h1>
+    <p class="subtitle">Histórico de execuções do pipeline, com status e erros.</p>
+  </div>
+</section>
+
+<section class="panel">
+  <header class="panel-head">
+    <h2>{{.Pagination.Total}} scan(s)</h2>
+  </header>
+
+  <form class="filters" method="get" action="/scans">
+    <label>
+      <span>Domínio</span>
+      <input type="search" name="q" value="{{.Query}}" placeholder="ex.: example.com">
+    </label>
+    <label>
+      <span>Status</span>
+      <select name="status">
+        <option value="">Todos</option>
+        <option value="running" {{if eq .StatusFilter "running"}}selected{{end}}>running</option>
+        <option value="completed" {{if eq .StatusFilter "completed"}}selected{{end}}>completed</option>
+        <option value="failed" {{if eq .StatusFilter "failed"}}selected{{end}}>failed</option>
+      </select>
+    </label>
+    <div class="filter-actions">
+      <button class="btn" type="submit">Filtrar</button>
+      <a class="btn ghost" href="/scans">Limpar</a>
+    </div>
+  </form>
+
+  {{if .Scans}}
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Domínio</th>
+          <th>Status</th>
+          <th>Início</th>
+          <th>Fim</th>
+          <th>Duração</th>
+          <th>Erro</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{range .Scans}}
+        <tr>
+          <td class="mono"><a href="/scans/{{.ID}}">{{.ID}}</a></td>
+          <td><a href="/domains/{{.DomainID}}">{{.Domain.Name}}</a></td>
+          <td>{{template "status" .Status}}</td>
+          <td class="nowrap">{{fmtTime .StartedAt}}</td>
+          <td class="nowrap muted">{{fmtTimePtr .FinishedAt}}</td>
+          <td class="nowrap muted">{{duration .StartedAt .FinishedAt}}</td>
+          <td class="error-cell" title="{{.Error}}">{{if .Error}}{{truncate .Error 60}}{{else}}<span class="muted">—</span>{{end}}</td>
+        </tr>
+        {{end}}
+      </tbody>
+    </table>
+  </div>
+
+  {{template "pagination" .}}
+  {{else}}
+    {{template "empty" "Nenhum scan encontrado com esses filtros."}}
+  {{end}}
+</section>
+{{end}}
