@@ -1,7 +1,7 @@
 package database
 
 import (
-	"log"
+	"fmt"
 
 	"github.com/m4rco0/Rebellion/internal/database/models"
 	"gorm.io/driver/postgres"
@@ -10,29 +10,32 @@ import (
 
 var DB *gorm.DB
 
+// InitDB conecta ao PostgreSQL e aplica o schema atual via AutoMigrate.
+//
+// AutoMigrate é adequado enquanto o schema ainda está em desenvolvimento; ele
+// não remove/renomeia colunas nem executa migrações de dados. Quando o schema
+// estabilizar, troque por migrações versionadas (goose/atlas).
 func InitDB(dsn string) (*gorm.DB, error) {
-	var err error
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
-
 	if err != nil {
-		log.Fatalln("[!] Erro ao conectar com o banco de dados:", err)
-		return nil, err
+		return nil, fmt.Errorf("conectar ao postgres: %w", err)
 	}
 
-	err = db.AutoMigrate(
+	if err := db.AutoMigrate(
 		&models.Program{},
 		&models.Domain{},
-		&models.Endpoint{},
-		&models.Host{},
-		&models.Port{},
 		&models.Scan{},
 		&models.Subdomain{},
+		&models.ScanSubdomain{},
+		&models.Host{},
+		&models.Port{},
+		&models.Resolution{},
 		&models.URL{},
-	)
-
-	if err != nil {
-		log.Fatalln("[!] Erro ao migrar o banco de dados:", err)
-		return nil, err
+		&models.HTTPProbe{},
+	); err != nil {
+		return nil, fmt.Errorf("migrar schema: %w", err)
 	}
-	return db, err
+
+	DB = db
+	return db, nil
 }
